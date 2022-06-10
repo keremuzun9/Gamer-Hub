@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:animated_background/animated_background.dart';
 import 'package:flutter/material.dart';
 import 'package:gamer_hub/friends.dart';
+import 'package:gamer_hub/models/user_instance.dart';
 import 'package:gamer_hub/profile.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -71,8 +72,7 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
                                       Icons.person,
                                       color: Colors.white,
                                     ),
-                                    pageToGo: Profile(user: user)
-                                    ),
+                                    pageToGo: Profile()),
                                 const Divider(
                                     color: Colors.white,
                                     height: 10,
@@ -95,7 +95,7 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
                                       Icons.people,
                                       color: Colors.white,
                                     ),
-                                    pageToGo: FriendsPage(user: user)),
+                                    pageToGo: FriendsPage()),
                                 const Divider(
                                     color: Colors.white,
                                     height: 10,
@@ -122,7 +122,8 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
       padding: const EdgeInsets.all(10),
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: ((context) => Profile(user: user))));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: ((context) => Profile())));
         },
         child: ClipRRect(
             borderRadius: BorderRadius.circular(25),
@@ -182,8 +183,7 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
       {required String title,
       required Widget icon,
       required bool isLogOut,
-      Widget? pageToGo
-      }) {
+      Widget? pageToGo}) {
     bool isLogOutf = isLogOut;
     return ListTile(
       leading: icon,
@@ -232,6 +232,7 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
                             onPressed: () {
                               Navigator.of(context).pushNamedAndRemoveUntil(
                                   '/FirstScreen', (route) => false);
+                              UserInstance.instanceLogout();
                             },
                           ),
                           OutlinedButton(
@@ -254,7 +255,8 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
             },
           );
         } else {
-          Navigator.of(context).push(MaterialPageRoute(builder: ((context) => pageToGo!)));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: ((context) => pageToGo!)));
         }
       },
     );

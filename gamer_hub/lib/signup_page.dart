@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:animated_background/animated_background.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gamer_hub/models/api_acces.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ class SignupPage extends StatefulWidget {
   @override
   State<SignupPage> createState() => _SignupPageState();
 }
+
 bool _isLoading = false;
 bool _isPasswordVisible = false;
 bool _isPasswordVisible1 = false;
@@ -22,11 +24,14 @@ bool _isPasswordEight = false;
 bool _isPasswordOneNumber = false;
 final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 ///////////////////////////////////////////
-String _password= "", _confirmPassword="", _name="", _surname="", _email="";
+String _password = "",
+    _confirmPassword = "",
+    _name = "",
+    _surname = "",
+    _email = "";
 DateTime _dateTime = DateTime.utc(2000, 11, 18);
 String _gender = "Male";
 ///////////////////////////////////////////
-
 
 //Color(0xFF2E3239)
 class _SignupPageState extends State<SignupPage>
@@ -39,6 +44,7 @@ class _SignupPageState extends State<SignupPage>
       bool _isPasswordOneNumber = false;
       super.initState();
     }
+
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(
@@ -121,10 +127,10 @@ class _SignupPageState extends State<SignupPage>
                                   return null;
                                 }
                               },
-                              onChanged: (String? name){
+                              onChanged: (String? name) {
                                 _name = name!;
                               },
-                              
+
                               cursorColor: Colors.white,
                               textInputAction: TextInputAction.done, //tik
                               decoration: const InputDecoration(
@@ -154,10 +160,10 @@ class _SignupPageState extends State<SignupPage>
                                   return null;
                                 }
                               },
-                              onChanged: (String? surname){
+                              onChanged: (String? surname) {
                                 _surname = surname!;
                               },
-                              
+
                               cursorColor: Colors.white,
                               textInputAction: TextInputAction.done, //tik
                               decoration: const InputDecoration(
@@ -189,10 +195,10 @@ class _SignupPageState extends State<SignupPage>
                                   return null;
                                 }
                               },
-                              onChanged: (String? email){
+                              onChanged: (String? email) {
                                 _email = email!;
                               },
-                              
+
                               cursorColor: Colors.white,
                               textInputAction: TextInputAction.done, //tik
                               decoration: const InputDecoration(
@@ -216,7 +222,7 @@ class _SignupPageState extends State<SignupPage>
                                       ? Colors.white
                                       : Colors.black),
                               obscureText: !_isPasswordVisible,
-                              onSaved: (String? password){
+                              onSaved: (String? password) {
                                 _password = password!;
                               },
                               onChanged: (password) {
@@ -420,18 +426,18 @@ class _SignupPageState extends State<SignupPage>
                                     _gender == "Male" ? Icons.man : Icons.woman,
                                     size: 60,
                                   ),
-                                ),        
+                                ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Column(children: [
-                                       Radio(
+                                      Radio(
                                         autofocus: true,
                                         activeColor: Colors.white,
                                         value: "Male",
                                         groupValue: _gender,
-                                        onChanged: (String? value){
+                                        onChanged: (String? value) {
                                           _gender = value!;
                                           setState(() {
                                             debugPrint(_gender);
@@ -439,20 +445,20 @@ class _SignupPageState extends State<SignupPage>
                                         },
                                       ),
                                       Text("MALE",
-                                       style: GoogleFonts.montserrat(
-                                                  fontSize: 13))
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 13))
                                     ]),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Column(children: [
-                                            Radio(
+                                          Radio(
                                             activeColor: Colors.white,
-                                            autofocus: false,  
+                                            autofocus: false,
                                             value: "Female",
                                             groupValue: _gender,
-                                            onChanged: (String? value){
+                                            onChanged: (String? value) {
                                               _gender = value!;
                                               setState(() {
                                                 debugPrint(_gender);
@@ -468,42 +474,52 @@ class _SignupPageState extends State<SignupPage>
                                   ],
                                 )
                               ])),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                                child: OutlinedButton(
-                                  onPressed: ()async{
-                                    if(_formkey.currentState!.validate()){
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                            child: OutlinedButton(
+                                onPressed: () async {
+                                  if (_formkey.currentState!.validate()) {
                                     setState(() {
                                       _isLoading = true;
                                     });
-                                    await register(_email, _name + " " +_surname, _gender, _password, _dateTime);
+                                    await register(
+                                        _email,
+                                        _name + " " + _surname,
+                                        _gender,
+                                        _password,
+                                        _dateTime);
                                     setState(() {
-                                       _isLoading = false;
-                                    }); 
+                                      _isLoading = false;
+                                    });
                                   }
-                                  }, 
-                                  child: _isLoading ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: 15,
-                                        width: 15,
-                                        child: Image.asset("assets/gifs/loading.gif"),
-                                        // child: CircularProgressIndicator(
-                                        //   color: Colors.white,
-                                        // ),
-                                      ),
-                                      const SizedBox(width: 20,),
-                                      Text("Please Wait", style: GoogleFonts.montserrat())
-                                    ],
-                                  )
-                                  : Text("Register", style: GoogleFonts.montserrat()),
-                                  style: OutlinedButton.styleFrom(
+                                },
+                                child: _isLoading
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
+                                            width: 15,
+                                            child: Image.asset(
+                                                "assets/gifs/loading.gif"),
+                                            // child: CircularProgressIndicator(
+                                            //   color: Colors.white,
+                                            // ),
+                                          ),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text("Please Wait",
+                                              style: GoogleFonts.montserrat())
+                                        ],
+                                      )
+                                    : Text("Register",
+                                        style: GoogleFonts.montserrat()),
+                                style: OutlinedButton.styleFrom(
                                     primary: Colors.white,
-                                    backgroundColor: Colors.grey.shade900
-                                  )
-                                  ),
-                              )
+                                    backgroundColor: Colors.grey.shade900)),
+                          )
                         ]),
                       ),
                     ),
@@ -547,52 +563,60 @@ class _SignupPageState extends State<SignupPage>
     );
   }
 
-  Future register(String email, String fullname, String gender, String password, DateTime birthdate ) async{
-    try{
-      var body = {"Name": fullname, "Email": email, "Gender": gender, "Password": password, "BirthDate": birthdate.toString()};
-    var response = await http.post(Uri.https("1ce6-46-196-74-101.eu.ngrok.io", "Api/Users/Register"),
-    headers: {
-        "content-type" : "application/json",
-        "accept" : "application/json",
-      },
-    body: jsonEncode(body));
-    var data = response.body;
-    debugPrint(data);
-    if(response.statusCode==200){
+  Future register(String email, String fullname, String gender, String password,
+      DateTime birthdate) async {
+    try {
+      var body = {
+        "Name": fullname,
+        "Email": email,
+        "Gender": gender,
+        "Password": password,
+        "BirthDate": birthdate.toString()
+      };
+      var response =
+          await http.post(Uri.https(ApiAcces.baseUrl, "Api/Users/Register"),
+              headers: {
+                "content-type": "application/json",
+                "accept": "application/json",
+              },
+              body: jsonEncode(body));
+      var data = response.body;
       debugPrint(data);
-      showAlertDialogSucces(context, "assets/gifs/signup.gif");
-    }else if(response.statusCode==400){
-      debugPrint(data);
-      showAlertDialogError(context, data, "assets/gifs/error.gif");
-    }else{
-      showAlertDialogNetwork(context, "assets/gifs/internet.gif");
-    }
-    }on SocketException{
+      if (response.statusCode == 200) {
+        debugPrint(data);
+        showAlertDialogSucces(context, "assets/gifs/signup.gif");
+      } else if (response.statusCode == 400) {
+        debugPrint(data);
+        showAlertDialogError(context, data, "assets/gifs/error.gif");
+      } else {
+        showAlertDialogNetwork(context, "assets/gifs/internet.gif");
+      }
+    } on SocketException {
       showAlertDialogNetwork(context, "assets/gifs/internet.gif");
     }
   }
 
-  dynamic showAlertDialogError(BuildContext context, var data, String assetGif) {
-  // set up the button
-  Widget okButton = OutlinedButton(
+  dynamic showAlertDialogError(
+      BuildContext context, var data, String assetGif) {
+    // set up the button
+    Widget okButton = OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        primary: Colors.grey.shade800
-        ),
+          backgroundColor: Colors.white, primary: Colors.grey.shade800),
       child: Text("Got it!", style: GoogleFonts.montserrat(fontSize: 18)),
       onPressed: () {
         Navigator.pop(context);
       },
     );
-  // show the dialog
-  showDialog(
-    barrierDismissible: false,
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.grey.shade900,
           elevation: 20,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -608,7 +632,9 @@ class _SignupPageState extends State<SignupPage>
                   ),
                 ),
                 const SizedBox(height: 15),
-                Text(data, style: GoogleFonts.montserrat(color: Colors.white, fontSize: 15)),
+                Text(data,
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 15)),
                 const SizedBox(height: 15),
                 okButton
               ],
@@ -617,28 +643,28 @@ class _SignupPageState extends State<SignupPage>
         );
       },
     );
-}
+  }
+
   dynamic showAlertDialogSucces(BuildContext context, String assetGif) {
-  // set up the button
-  Widget okButton = OutlinedButton(
+    // set up the button
+    Widget okButton = OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        primary: Colors.grey.shade800
-        ),
+          backgroundColor: Colors.white, primary: Colors.grey.shade800),
       child: Text("Let's Start!", style: GoogleFonts.montserrat(fontSize: 18)),
       onPressed: () {
         Navigator.of(context).popUntil((route) => route.isFirst);
       },
     );
-  // show the dialog
-  showDialog(
-    barrierDismissible: false,
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.grey.shade900,
           elevation: 20,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -654,10 +680,9 @@ class _SignupPageState extends State<SignupPage>
                   ),
                 ),
                 const SizedBox(height: 18),
-                Text("Welcome Gamer!", style: GoogleFonts.montserrat(color: Colors.white,
-                fontSize: 20
-                )
-                ),
+                Text("Welcome Gamer!",
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 20)),
                 const SizedBox(height: 18),
                 okButton
               ],
@@ -666,28 +691,28 @@ class _SignupPageState extends State<SignupPage>
         );
       },
     );
-}
+  }
+
   dynamic showAlertDialogNetwork(BuildContext context, String assetGif) {
-  // set up the button
-  Widget okButton = OutlinedButton(
+    // set up the button
+    Widget okButton = OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        primary: Colors.grey.shade800
-        ),
+          backgroundColor: Colors.white, primary: Colors.grey.shade800),
       child: Text("Try Again!", style: GoogleFonts.montserrat(fontSize: 15)),
       onPressed: () {
         Navigator.pop(context);
       },
     );
-  // show the dialog
-  showDialog(
-    barrierDismissible: false,
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.grey.shade900,
           elevation: 20,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -703,10 +728,9 @@ class _SignupPageState extends State<SignupPage>
                   ),
                 ),
                 const SizedBox(height: 18),
-                Text("Please Make Sure You Are Online.", style: GoogleFonts.montserrat(color: Colors.white,
-                fontSize: 15
-                )
-                ),
+                Text("Please Make Sure You Are Online.",
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 15)),
                 const SizedBox(height: 18),
                 okButton
               ],
@@ -715,6 +739,5 @@ class _SignupPageState extends State<SignupPage>
         );
       },
     );
+  }
 }
-}
-

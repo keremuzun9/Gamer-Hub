@@ -6,6 +6,8 @@ import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gamer_hub/home_page.dart';
+import 'package:gamer_hub/models/api_acces.dart';
+import 'package:gamer_hub/models/user_instance.dart';
 import 'package:gamer_hub/models/user_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -196,23 +198,22 @@ class _PanelWidgetState extends State<PanelWidget> {
                                 isPressed2 = false;
                                 isLoading = true;
                                 if (_formkey.currentState!.validate()) {
-                                setState(() {
-                                  login(_email, _password);
-                                  isLoading = false;
-                                });
-                              }else{
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              }
-                                });
+                                  setState(() {
+                                    login(_email, _password);
+                                    isLoading = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              });
                               // if (_formkey.currentState!.validate()) {
                               //   login(_email, _password);
                               // }
                               // setState(() {
                               //   isLoading = false;
-                            }
-                            ,
+                            },
                             onPointerDown: (_) => setState(() {
                               isPressed2 = true;
                             }),
@@ -238,7 +239,10 @@ class _PanelWidgetState extends State<PanelWidget> {
                                 width: 100,
                                 child: Center(
                                   child: SizedBox(
-                                    child: isLoading ? Image.asset("assets/gifs/loading.gif") : Image.asset("assets/images/signb.png"),
+                                    child: isLoading
+                                        ? Image.asset("assets/gifs/loading.gif")
+                                        : Image.asset(
+                                            "assets/images/signb.png"),
                                     height: isPressed2 ? 98 : 100,
                                     width: isPressed2 ? 98 : 100,
                                   ),
@@ -281,33 +285,33 @@ class _PanelWidgetState extends State<PanelWidget> {
   }
 
   Future login(String email, String password) async {
-    try{
+    try {
       showAlertDialogAwait(context);
-    var body = {
-      "Email": email,
-      "Password": password,
-    };
-    var response = await http.post(
-        Uri.https("1ce6-46-196-74-101.eu.ngrok.io", "Api/Users/Login"),
-        headers: {
-          "content-type": "application/json",
-          "accept": "application/json",
-        },
-        body: jsonEncode(body));
-    var data = response.body;
-    if (response.statusCode == 200) {
-      debugPrint(data);
-      UserModel user = UserModel.fromMap(jsonDecode(data));  
-      debugPrint(user.token);
-      debugPrint(user.id.toString());
-      debugPrint(user.name);   
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage(user : user)), (route) => false);
-    } else if(response.statusCode==400) {
-      showAlertDialogError(context, data);
-    } else {
-      showAlertDialogNetwork(context, "assets/gifs/internet.gif");
-    }
-    }on SocketException {
+      var body = {
+        "Email": email,
+        "Password": password,
+      };
+      var response =
+          await http.post(Uri.https(ApiAcces.baseUrl, "Api/Users/Login"),
+              headers: {
+                "content-type": "application/json",
+                "accept": "application/json",
+              },
+              body: jsonEncode(body));
+      var data = response.body;
+      if (response.statusCode == 200) {
+        debugPrint(data);
+        UserModel user = UserModel.fromMap(jsonDecode(data));
+        UserInstance.instanceLogin(user.id, user.email, user.name, user.token);
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => HomePage()),
+            (route) => false);
+      } else if (response.statusCode == 400) {
+        showAlertDialogError(context, data);
+      } else {
+        showAlertDialogNetwork(context, "assets/gifs/internet.gif");
+      }
+    } on SocketException {
       showAlertDialogNetwork(context, "assets/gifs/internet.gif");
     }
   }
@@ -316,9 +320,7 @@ class _PanelWidgetState extends State<PanelWidget> {
     // set up the button
     Widget okButton = OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        primary: Colors.grey.shade800
-        ),
+          backgroundColor: Colors.white, primary: Colors.grey.shade800),
       child: Text("Got it!", style: GoogleFonts.montserrat(fontSize: 18)),
       onPressed: () {
         Navigator.of(context).popUntil((route) => route.isFirst);
@@ -330,10 +332,10 @@ class _PanelWidgetState extends State<PanelWidget> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-
           backgroundColor: Colors.grey.shade900,
           elevation: 20,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -349,7 +351,9 @@ class _PanelWidgetState extends State<PanelWidget> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                Text(data, style: GoogleFonts.montserrat(color: Colors.white, fontSize: 15)),
+                Text(data,
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 15)),
                 const SizedBox(height: 15),
                 okButton
               ],
@@ -359,27 +363,27 @@ class _PanelWidgetState extends State<PanelWidget> {
       },
     );
   }
+
   dynamic showAlertDialogNetwork(BuildContext context, String assetGif) {
-  // set up the button
-  Widget okButton = OutlinedButton(
+    // set up the button
+    Widget okButton = OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        primary: Colors.grey.shade800
-        ),
+          backgroundColor: Colors.white, primary: Colors.grey.shade800),
       child: Text("Try Again!", style: GoogleFonts.montserrat(fontSize: 15)),
       onPressed: () {
         Navigator.of(context).popUntil((route) => route.isFirst);
       },
     );
-  // show the dialog
-  showDialog(
-    barrierDismissible: false,
+    // show the dialog
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.grey.shade900,
           elevation: 20,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -395,10 +399,9 @@ class _PanelWidgetState extends State<PanelWidget> {
                   ),
                 ),
                 const SizedBox(height: 18),
-                Text("Please Make Sure You Are Online.", style: GoogleFonts.montserrat(color: Colors.white,
-                fontSize: 15
-                )
-                ),
+                Text("Please Make Sure You Are Online.",
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 15)),
                 const SizedBox(height: 18),
                 okButton
               ],
@@ -407,16 +410,18 @@ class _PanelWidgetState extends State<PanelWidget> {
         );
       },
     );
-}
-dynamic showAlertDialogAwait(BuildContext context) {
-  showDialog(
-    barrierDismissible: false,
+  }
+
+  dynamic showAlertDialogAwait(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.grey.shade900,
           elevation: 20,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -425,13 +430,12 @@ dynamic showAlertDialogAwait(BuildContext context) {
               children: [
                 const SizedBox(height: 18),
                 const SpinKitWave(
-                color: Colors.white,
-              ),
-                const SizedBox(height: 18),
-                Text("Please Wait...", style: GoogleFonts.montserrat(color: Colors.white,
-                fontSize: 15
-                )
+                  color: Colors.white,
                 ),
+                const SizedBox(height: 18),
+                Text("Please Wait...",
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 15)),
                 const SizedBox(height: 18),
               ],
             ),
@@ -439,6 +443,5 @@ dynamic showAlertDialogAwait(BuildContext context) {
         );
       },
     );
-}
-
+  }
 }

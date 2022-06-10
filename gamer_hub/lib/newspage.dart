@@ -8,12 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-List<String> newsTitle = [];
-List<String> newsContent = [];
-List<String> newsImage = [];
-List<int> newsId = [];
-List<String> newsGameName = [];
-
 class NewsPage extends StatefulWidget {
   NewsPage({
     Key? key,
@@ -60,11 +54,11 @@ class _NewsPageState extends State<NewsPage> {
             separatorBuilder: (context, index) {
               return const SizedBox(height: 10);
             },
-            itemCount: newsTitle.length,
+            itemCount: _postList.length,
             itemBuilder: (context, index) {
-              String aNewsTitle = newsTitle[index];
-              String aNewsContent = newsContent[index];
-              String aNewsImage = newsImage[index];
+              String? aNewsTitle = _postList.elementAt(index).title;
+              String? aNewsContent = _postList.elementAt(index).content;
+              String? aNewsImage = _postList.elementAt(index).image;
               return Card(
                 color: const Color(0xFF2E3239),
                 shape: RoundedRectangleBorder(
@@ -77,8 +71,8 @@ class _NewsPageState extends State<NewsPage> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          buildImage(aNewsImage),
-                          buildTitle(context, aNewsTitle, aNewsContent)
+                          buildImage(aNewsImage!),
+                          buildTitle(context, aNewsTitle!, aNewsContent!)
                         ],
                       ),
                     ),
@@ -153,37 +147,11 @@ class _NewsPageState extends State<NewsPage> {
         for (int i = 0; i < values.length; i++) {
           if (values[i] != null) {
             Map<String, dynamic> map = values[i];
-            _postList.add(NewsModel.fromJson(map));
-            debugPrint('${map['title']}');
-            if (newsTitle.contains(map['title'])) {
-              return null;
-            } else {
-              newsTitle.add(map['title']);
-            }
-            if (newsContent.contains(map['content'])) {
-              return null;
-            } else {
-              newsContent.add(map['content']);
-            }
-            if (newsImage.contains(map['image'])) {
-              return null;
-            } else {
-              newsImage.add(map['image']);
-            }
-            if (newsId.contains(map['postId'])) {
-              return null;
-            } else {
-              newsId.add(map['postId']);
-              //   }if (newsGameName.contains(map['gamename'])) {
-              //     return null;
-              //   } else {
-              //     newsGameName.add(map['gamename']);
-              // }
-            }
+            setState(() {
+              _postList.add(NewsModel.fromJson(map));
+            });
           }
-          debugPrint(newsTitle.toString());
         }
-        setState(() {});
       }
     }
   }
