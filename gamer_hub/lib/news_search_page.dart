@@ -1,18 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gamer_hub/models/api_acces.dart';
 import 'package:gamer_hub/models/news_model.dart';
-import 'package:gamer_hub/models/user_model.dart';
+import 'package:gamer_hub/models/user_instance.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class NewsSearchPage extends StatefulWidget {
-  UserModel user;
-  NewsSearchPage({Key? key, required this.user}) : super(key: key);
+  NewsSearchPage({Key? key}) : super(key: key);
 
   @override
-  State<NewsSearchPage> createState() => _NewsSearchPageState(user);
+  State<NewsSearchPage> createState() => _NewsSearchPageState();
 }
 
 String? lastInputValue;
@@ -21,13 +21,13 @@ String? _gamename;
 final List<NewsModel> _postList = [];
 
 class _NewsSearchPageState extends State<NewsSearchPage> {
-  UserModel user;
-  _NewsSearchPageState(this.user);
+  _NewsSearchPageState();
   @override
   void initState() {
     _postList.clear();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,28 +68,29 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
                   height: 50,
                   width: 340,
                   child: TextField(
-                    autofocus: true,
-                    cursorColor: Colors.white,
+                      autofocus: true,
+                      cursorColor: Colors.white,
                       decoration: InputDecoration(
-                        hoverColor: Colors.white,
+                          hoverColor: Colors.white,
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.white)),
                           filled: true,
                           fillColor: const Color(0xFF2E3239),
                           hintText: "Search for a game or news.",
                           suffixIconColor: Colors.white,
-                          suffixIcon: const Icon(Icons.search, color: Colors.white,),
+                          suffixIcon: const Icon(
+                            Icons.search,
+                            color: Colors.white,
+                          ),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20)),
                           hintStyle: const TextStyle()),
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.name,
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white
-                      ),
+                      style: GoogleFonts.montserrat(color: Colors.white),
                       onSubmitted: (inputValue) {
                         _gamename = inputValue;
-                        getNews(user.token);
+                        getNews(UserInstance.userToken!);
                         setState(() {
                           _postList.clear();
                         });
@@ -148,8 +149,15 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
       imageErrorBuilder: (context, error, stackTrace) {
         return Center(
           child: Column(children: [
-            Image.asset('assets/images/person2.png', fit: BoxFit.scaleDown, color: Colors.white,),
-            Text("Due to an error we couldn't display the image.", style: GoogleFonts.montserrat(color: Colors.white,))
+            Image.asset(
+              'assets/images/person2.png',
+              fit: BoxFit.scaleDown,
+              color: Colors.white,
+            ),
+            Text("Due to an error we couldn't display the image.",
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                ))
           ]),
         );
       },
@@ -181,14 +189,14 @@ class _NewsSearchPageState extends State<NewsSearchPage> {
 
   Future getNews(String token) async {
     var body = {"searchstring": _gamename};
-    var response = await http.post(
-        Uri.https("1ce6-46-196-74-101.eu.ngrok.io", "Api/Post/Search"),
-        headers: {
-          "content-type": "application/json",
-          "accept": "application/json",
-          'authorization': 'Bearer $token',
-        },
-        body: jsonEncode(body));
+    var response =
+        await http.post(Uri.https(ApiAcces.baseUrl, "Api/Post/Search"),
+            headers: {
+              "content-type": "application/json",
+              "accept": "application/json",
+              'authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body));
     var data = response.body;
     debugPrint(data);
     if (data.isEmpty) {

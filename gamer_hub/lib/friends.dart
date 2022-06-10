@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:gamer_hub/add_friend.dart';
 import 'package:gamer_hub/friend_invites.dart';
 import 'package:gamer_hub/friends_list.dart';
-import 'package:gamer_hub/models/user_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FriendsPage extends StatefulWidget {
-  UserModel user;
-  FriendsPage({Key? key, required this.user}) : super(key: key);
+  FriendsPage({Key? key}) : super(key: key);
 
   @override
-  State<FriendsPage> createState() => _FriendsPageState(user);
+  State<FriendsPage> createState() => _FriendsPageState();
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-  UserModel user;
-  _FriendsPageState(this.user);
+  _FriendsPageState();
   @override
   Widget build(BuildContext context) => DefaultTabController(
       length: 3,
@@ -24,9 +21,15 @@ class _FriendsPageState extends State<FriendsPage> {
           bottom: const TabBar(
             indicatorColor: Colors.white,
             tabs: [
-              Tab(icon: Icon(Icons.person_search), text: "Add a Friend",),
+              Tab(
+                icon: Icon(Icons.person_search),
+                text: "Add a Friend",
+              ),
               Tab(icon: Icon(Icons.people), text: "Friends"),
-              Tab(icon: Icon(Icons.person_add), text: "Invites",)
+              Tab(
+                icon: Icon(Icons.person_add),
+                text: "Invites",
+              )
             ],
           ),
           centerTitle: true,
@@ -45,11 +48,7 @@ class _FriendsPageState extends State<FriendsPage> {
           ),
         ),
         body: TabBarView(
-          children: [
-            AddFriends(user: user),
-            FriendsList(user: user),
-            FriendInvites(user: user)
-          ],
+          children: [AddFriends(), FriendsList(), FriendInvites()],
         ),
       ));
 }

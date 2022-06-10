@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gamer_hub/drawer.dart';
+import 'package:gamer_hub/models/api_acces.dart';
 import 'package:gamer_hub/models/news_model.dart';
-import 'package:gamer_hub/models/user_model.dart';
+import 'package:gamer_hub/models/user_instance.dart';
 import 'package:gamer_hub/news_search_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -14,23 +15,22 @@ List<int> newsId = [];
 List<String> newsGameName = [];
 
 class NewsPage extends StatefulWidget {
-  UserModel user;
-  NewsPage({Key? key, required this.user}) : super(key: key);
-
+  NewsPage({
+    Key? key,
+  }) : super(key: key);
   @override
-  State<NewsPage> createState() => _NewsPageState(user);
+  State<NewsPage> createState() => _NewsPageState();
 }
 
 final List<NewsModel> _postList = [];
 
 class _NewsPageState extends State<NewsPage> {
-  UserModel user;
-  _NewsPageState(this.user);
+  _NewsPageState();
   @override
   Widget build(BuildContext context) {
-    getNews(user.token);
+    getNews(UserInstance.userToken!);
     return Scaffold(
-      drawer: MyDrawer(user: user),
+      drawer: MyDrawer(user: UserInstance.getUser()),
       backgroundColor: Colors.grey.shade900,
       appBar: AppBar(
         title: Text(
@@ -42,7 +42,7 @@ class _NewsPageState extends State<NewsPage> {
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return NewsSearchPage(user: user);
+                    return NewsSearchPage();
                   },
                 ));
               },
@@ -98,8 +98,15 @@ class _NewsPageState extends State<NewsPage> {
       imageErrorBuilder: (context, error, stackTrace) {
         return Center(
           child: Column(children: [
-            Image.asset('assets/images/person2.png', fit: BoxFit.scaleDown, color: Colors.white,),
-            Text("Due to an error we couldn't display the image.", style: GoogleFonts.montserrat(color: Colors.white),)
+            Image.asset(
+              'assets/images/person2.png',
+              fit: BoxFit.scaleDown,
+              color: Colors.white,
+            ),
+            Text(
+              "Due to an error we couldn't display the image.",
+              style: GoogleFonts.montserrat(color: Colors.white),
+            )
           ]),
         );
       },
@@ -131,7 +138,7 @@ class _NewsPageState extends State<NewsPage> {
 
   Future getNews(String token) async {
     var response = await http.get(
-      Uri.https("1ce6-46-196-74-101.eu.ngrok.io", "Api/Post"),
+      Uri.https(ApiAcces.baseUrl, "Api/Post"),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',

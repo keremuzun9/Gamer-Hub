@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:gamer_hub/models/api_acces.dart';
 import 'package:gamer_hub/models/friend_model.dart';
-import 'package:gamer_hub/models/user_model.dart';
+import 'package:gamer_hub/models/user_instance.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AddFriends extends StatefulWidget {
-  UserModel user;
-  AddFriends({Key? key, required this.user}) : super(key: key);
+  AddFriends({Key? key}) : super(key: key);
 
   @override
-  State<AddFriends> createState() => _AddFriendsState(user);
+  State<AddFriends> createState() => _AddFriendsState();
 }
 
 List<FriendModel> _friendList = [];
 String userName = "";
+
 class _AddFriendsState extends State<AddFriends> {
-  UserModel user;
-  _AddFriendsState(this.user);
+  _AddFriendsState();
   @override
   void initState() {
     _friendList.clear();
@@ -69,7 +69,7 @@ class _AddFriendsState extends State<AddFriends> {
                       style: GoogleFonts.montserrat(color: Colors.white),
                       onSubmitted: (inputValue) {
                         userName = inputValue;
-                        getUsers(user.token);
+                        getUsers(UserInstance.userToken!);
                         setState(() {
                           _friendList.clear();
                         });
@@ -112,9 +112,9 @@ class _AddFriendsState extends State<AddFriends> {
                             style: GoogleFonts.montserrat(color: Colors.white)),
                         trailing: IconButton(
                             onPressed: () {
-                              sendInvite(user.token, user.id, friendsId!);
-                              setState(() {
-                              });
+                              sendInvite(UserInstance.userToken!,
+                                  UserInstance.userId!, friendsId!);
+                              setState(() {});
                             },
                             icon: const Icon(
                               Icons.person_add,
@@ -130,14 +130,14 @@ class _AddFriendsState extends State<AddFriends> {
 
   Future getUsers(String token) async {
     var body = {"searchstring": userName};
-    var response = await http.post(
-        Uri.https("1ce6-46-196-74-101.eu.ngrok.io", "Api/Users/Search"),
-        headers: {
-          "content-type": "application/json",
-          "accept": "application/json",
-          'authorization': 'Bearer $token',
-        },
-        body: jsonEncode(body));
+    var response =
+        await http.post(Uri.https(ApiAcces.baseUrl, "Api/Users/Search"),
+            headers: {
+              "content-type": "application/json",
+              "accept": "application/json",
+              'authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body));
     var data = response.body;
     debugPrint(data);
     if (data.isEmpty) {
@@ -166,8 +166,7 @@ class _AddFriendsState extends State<AddFriends> {
   Future sendInvite(String token, int requestedbyid, int requestedtoid) async {
     var body = {"requestedbyid": requestedbyid, "requestedtoid": requestedtoid};
     var response = await http.post(
-        Uri.https("1ce6-46-196-74-101.eu.ngrok.io",
-            "Api/Friendship/CreateFriendRequest"),
+        Uri.https(ApiAcces.baseUrl, "Api/Friendship/CreateFriendRequest"),
         headers: {
           "content-type": "application/json",
           "accept": "application/json",
