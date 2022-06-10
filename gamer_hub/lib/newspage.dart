@@ -24,7 +24,7 @@ class _NewsPageState extends State<NewsPage> {
   Widget build(BuildContext context) {
     getNews(UserInstance.userToken!);
     return Scaffold(
-      drawer: MyDrawer(user: UserInstance.getUser()),
+      drawer: MyDrawer(),
       backgroundColor: Colors.grey.shade900,
       appBar: AppBar(
         title: Text(

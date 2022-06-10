@@ -10,16 +10,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'models/user_model.dart';
 
 class MyDrawer extends StatefulWidget {
-  UserModel user;
-  MyDrawer({Key? key, required this.user}) : super(key: key);
+  MyDrawer({Key? key}) : super(key: key);
 
   @override
-  State<MyDrawer> createState() => _MyDrawerState(user);
+  State<MyDrawer> createState() => _MyDrawerState();
 }
 
 class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
-  UserModel user;
-  _MyDrawerState(this.user);
+  _MyDrawerState();
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -47,7 +45,9 @@ class _MyDrawerState extends State<MyDrawer> with TickerProviderStateMixin {
             children: [
               const SizedBox(height: 40),
               SizedBox(
-                child: buildHeader(name: user.name, email: user.email),
+                child: buildHeader(
+                    name: UserInstance.userName!,
+                    email: UserInstance.userEmail!),
                 width: 300,
                 height: 100,
               ),
