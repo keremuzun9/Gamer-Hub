@@ -4,22 +4,21 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gamer_hub/first_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'models/user_instance.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(UserInstance.userEmail);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: <Color>[
-              Colors.black,
-              Color(0xFF2E3239)
-            ])),
+                colors: <Color>[Colors.black, Color(0xFF2E3239)])),
         child: AnimatedSplashScreen(
             splash: Center(
                 child: ClipRRect(
@@ -30,8 +29,11 @@ class SplashScreen extends StatelessWidget {
                   height: 200,
                   width: 200,
                   child: Center(
-                      child: Image.asset("assets/images/logo.png", height: 200, width: 200,
-                          )),
+                      child: Image.asset(
+                    "assets/images/logo.png",
+                    height: 200,
+                    width: 200,
+                  )),
                   decoration: BoxDecoration(
                       gradient: const LinearGradient(
                           begin: Alignment.topLeft,

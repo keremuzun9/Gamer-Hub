@@ -300,9 +300,9 @@ class _PanelWidgetState extends State<PanelWidget> {
               body: jsonEncode(body));
       var data = response.body;
       if (response.statusCode == 200) {
-        debugPrint(data);
         UserModel user = UserModel.fromMap(jsonDecode(data));
-        UserInstance.instanceLogin(user.id, user.email, user.name, user.token);
+        UserInstance.writeUser(user);
+        UserInstance.instanceLogin();
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => HomePage()),
             (route) => false);
