@@ -21,8 +21,12 @@ final List<NewsModel> _postList = [];
 class _NewsPageState extends State<NewsPage> {
   _NewsPageState();
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     getNews(UserInstance.userToken!);
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       drawer: MyDrawer(),
       backgroundColor: Colors.grey.shade900,

@@ -37,6 +37,7 @@ bool isPressed2 = false;
 class _PanelWidgetState extends State<PanelWidget> {
   @override
   Widget build(BuildContext context) {
+    debugPrint(UserInstance.userEmail);
     Offset distance = isPressed1 ? const Offset(4, 4) : const Offset(17, 17);
     double blur = isPressed1 ? 5.0 : 30.0;
     Offset distance2 = isPressed2 ? const Offset(4, 4) : const Offset(17, 17);

@@ -11,7 +11,8 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(UserInstance.userEmail);
+    UserInstance.instanceLogin();
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
